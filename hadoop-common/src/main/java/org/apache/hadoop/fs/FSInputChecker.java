@@ -194,6 +194,12 @@ abstract public class FSInputChecker extends FSInputStream {
     int n = 0;
     for (;;) {
       int nread = read1(b, off + n, len - n);
+      //add by zzm
+      if(CurBlockInfo.blockfirstreceive) {
+        len = len + (int)CurBlockInfo.curblockincrease;
+        CurBlockInfo.blockfirstreceive = false;
+      }
+      //end zzm
       if (nread <= 0) 
         return (n == 0) ? nread : n;
       n += nread;

@@ -500,13 +500,30 @@ abstract class CommandWithDestination extends FsCommand {
         e.setOperation("delete");
         throw e;
       }
-      if (!rename(src.path, target.path)) {
-        // too bad we don't know why it failed
-        PathIOException e = new PathIOException(src.toString());
-        e.setOperation("rename");
-        e.setTargetPath(target.toString());
-        throw e;
+//modify by zzm
+
+      String filename=target.path.toString();
+      String suffix = filename.substring(filename.lastIndexOf(".") + 1);
+      String compsuffix = "gz";
+      if(compsuffix.equals(suffix)){
+        String namenosuf=filename.substring(0,filename.lastIndexOf("."));
+        Path outputPath = new Path(namenosuf);
+        if (!rename(src.path, outputPath)) {
+          PathIOException e = new PathIOException(src.toString());
+          e.setOperation("rename");
+          e.setTargetPath(target.toString());
+          throw e;
+        }
+      } else{
+        if (!rename(src.path, target.path)) {
+          // too bad we don't know why it failed
+          PathIOException e = new PathIOException(src.toString());
+          e.setOperation("rename");
+          e.setTargetPath(target.toString());
+          throw e;
+        }
       }
+//end zzm
       // cancel delete on exit if rename is successful
       cancelDeleteOnExit(src.path);
     }
